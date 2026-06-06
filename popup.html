@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <span class="paw">🐾</span>
+    <h1>Cat Mode</h1>
+  </header>
+
+  <div class="row toggle-row">
+    <div>
+      <div class="label">Block keyboard &amp; trackpad</div>
+      <div class="sub" id="status-sub">Off</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="toggle" />
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div class="section">
+    <div class="label">Unlock shortcut</div>
+    <div class="sub">Press this combo while Cat Mode is on to turn it off.</div>
+    <div class="combo-row">
+      <kbd id="combo-display">Ctrl + Shift + K</kbd>
+      <button id="record-btn">Change</button>
+    </div>
+    <div class="hint" id="record-hint"></div>
+  </div>
+
+  <p class="footnote">
+    Global toggle: <strong>⌘/Ctrl + Shift + 9</strong> (edit at
+    chrome://extensions/shortcuts). Works on web pages — reload tabs opened
+    before installing.
+  </p>
+
+  <script src="popup.js"></script>
+</body>
+</html>
