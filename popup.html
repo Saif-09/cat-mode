@@ -21,6 +21,34 @@
     </label>
   </div>
 
+  <div class="stat" id="blocked-count">🐾 No paws blocked yet</div>
+
+  <div class="section">
+    <div class="row opt-row">
+      <div>
+        <div class="label">Keep videos playing</div>
+        <div class="sub">Resume video if something pauses it while locked.</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="keep-video" />
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="row opt-row">
+      <div>
+        <div class="label">Auto-disable after</div>
+        <div class="sub">Safety timer so you're never stuck on.</div>
+      </div>
+      <select id="auto-off">
+        <option value="0">Never</option>
+        <option value="5">5 min</option>
+        <option value="15">15 min</option>
+        <option value="30">30 min</option>
+        <option value="60">1 hour</option>
+      </select>
+    </div>
+  </div>
+
   <div class="section">
     <div class="label">Unlock shortcut</div>
     <div class="sub">Press this combo while Cat Mode is on to turn it off.</div>
@@ -31,10 +59,22 @@
     <div class="hint" id="record-hint"></div>
   </div>
 
+  <div class="section">
+    <div class="label">Global on/off shortcut</div>
+    <div class="sub">Toggles Cat Mode even when a page is blocking input.</div>
+    <div class="combo-row">
+      <kbd id="global-display">…</kbd>
+      <button id="global-btn">Set up</button>
+    </div>
+    <div class="warn" id="global-warn" hidden>
+      ⚠️ No shortcut is assigned on this device. Chrome can't set it
+      automatically — click <strong>Set up</strong> and pick a combo.
+    </div>
+  </div>
+
   <p class="footnote">
-    Global toggle: <strong>⌘/Ctrl + Shift + 9</strong> (edit at
-    chrome://extensions/shortcuts). Works on web pages — reload tabs opened
-    before installing.
+    Tip: the toolbar toggle above always works. Cat Mode runs on web pages —
+    reload any tabs opened before you installed it.
   </p>
 
   <script src="popup.js"></script>

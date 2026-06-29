@@ -7,20 +7,25 @@ Cat Mode — Keyboard Guard
 Productivity
 
 ## Short description (132 char max)
-Block your keyboard & trackpad with one shortcut so pets walking across them can't mess up your video or page. Unlock instantly.
+Let your cat pounce at YouTube cat videos without their paws pausing or breaking the video. Flip on; unlock with your shortcut.
 
 ## Detailed description
-Ever had your cat, rabbit, or toddler walk across the keyboard while a video is
-playing — pausing it, skipping ahead, or triggering random shortcuts? Cat Mode
-fixes that.
+Put on a YouTube "cat games" video — birds, mice, or fish darting across the
+screen — and let your cat go into full hunting mode. The problem? Every pounce
+lands on the keyboard or trackpad and pauses the video, skips ahead, mutes it,
+or opens a random app. You end up a full-time video-un-pauser.
 
-Flip Cat Mode on and it blocks all keyboard keys, mouse clicks, trackpad taps,
-scrolling, and touch on the current web page, so a stray paw can't do anything.
-A clear "🐾 Cat Mode ON" banner reminds you it's active.
+Cat Mode fixes that. Flip it on and it blocks all keyboard keys, mouse clicks,
+trackpad taps, scrolling, and touch on the current page — so your cat can smack
+the laptop all they want and the video just keeps playing. A clear
+"🐾 Cat Mode ON" banner reminds you it's active.
 
-To get back to normal, press your own unlock shortcut — a combo only a human
-would press (default Ctrl+Shift+K, fully customizable). You can also toggle it
-from a browser-level shortcut or the toolbar button at any time.
+When you want control back, press your own unlock shortcut — a combo only a
+human would press (default Ctrl+Shift+K, fully customizable). You can also
+toggle it from a browser-wide shortcut or the toolbar button at any time.
+
+Great for cats, but also for rabbits, dogs, toddlers, or anyone who shouldn't
+be touching the keyboard while something is playing.
 
 FEATURES
 • One-click on/off from the toolbar
@@ -37,9 +42,9 @@ the browser's address bar or other apps.
 
 ### Single purpose (paste)
 Cat Mode has one purpose: to block keyboard and trackpad/mouse input on the
-current web page so accidental presses — such as a pet walking across the
-keyboard — cannot disrupt the page or video. The user turns it on and off and
-unlocks it with a shortcut they define.
+current web page so accidental presses — such as a cat pouncing at the keyboard
+while watching a video — cannot pause, skip, or otherwise disrupt the page. The
+user turns it on and off and unlocks it with a shortcut they define.
 
 ### Remote code
 No — all code is contained in the extension package; nothing is fetched or

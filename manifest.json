@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Cat Mode — Keyboard Guard",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Block your keyboard & trackpad so pets walking across them can't disrupt your video or page. Unlock with your own shortcut.",
-  "permissions": ["storage"],
+  "permissions": ["storage", "alarms"],
   "icons": {
     "16": "icon16.png",
     "32": "icon32.png",

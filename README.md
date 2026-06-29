@@ -14,24 +14,50 @@ keyboard combo only a human would press.
 
 ## Use
 
-- Click the toolbar icon → flip **Block keyboard & trackpad** on.
-- A `🐾 Cat Mode ON` banner appears on the page. Keypresses, clicks, scroll,
-  and trackpad input are now swallowed before they reach the page.
+- Click the toolbar icon → flip **Block keyboard & trackpad** on. The toolbar
+  icon turns red while Cat Mode is active.
+- A `🐾 Cat Mode ON` banner appears on the page (with a running count of paws
+  blocked). Keypresses, clicks, scroll, and trackpad input are now swallowed
+  before they reach the page.
 - To unlock, press your shortcut (default **Ctrl + Shift + K**). You can also
   just flip the toggle off from the popup — the toolbar isn't blocked.
 - Change the unlock shortcut from the popup → **Change** → press the new combo.
+  Combos the browser reserves (e.g. `Ctrl+W`, `Ctrl+Shift+I`) are rejected.
+
+### Options (in the popup)
+
+- **Keep videos playing** — if something pauses a `<video>`/`<audio>` while Cat
+  Mode is on (an OS media key, a stray gesture), it's resumed automatically.
+- **Auto-disable after** — a safety timer (5 min – 1 hour) so you can never get
+  stuck with input blocked if you walk away.
+
+Your unlock shortcut and these preferences are stored in `chrome.storage.sync`,
+so they follow you to every device you're signed into Chrome on. The on/off
+state and the blocked counter are per-device (`chrome.storage.local`).
+
+On first install a short **welcome page** opens to walk you through pinning the
+icon and setting the global shortcut.
 
 ### Global shortcut
 
-There's also a browser-level toggle (default **⌘/Ctrl + Shift + 9**) that turns
-Cat Mode on or off even when a page is focused and blocking input. Edit or
-re-bind it at `chrome://extensions/shortcuts`. This is the most reliable
-on/off switch because Chrome dispatches it above the page.
+There's also a browser-level toggle (suggested **⌘/Ctrl + Shift + 9**) that turns
+Cat Mode on or off even when a page is focused and blocking input, because
+Chrome dispatches it above the page.
+
+> **Heads up:** the combo in `manifest.json` is only a *suggestion*. Chrome
+> won't always bind it on a fresh install — if the combo conflicts with another
+> extension or browser shortcut it's silently left **unassigned**, and there is
+> no way for an extension to set its own shortcut from code. If the popup shows
+> the global shortcut as **"Not set"**, click **Set up** (or open
+> `chrome://extensions/shortcuts`) and assign a combo yourself. The toolbar
+> toggle in the popup always works regardless.
 
 ## Regenerating icons
 
 Icons are committed as PNGs. To re-generate them, run `python3 gen_icons.py`
-(pure standard library, no dependencies).
+(pure standard library, no dependencies). It emits both the idle coral icons
+(`icon*.png`) and the red active-state icons (`icon*-active.png`) shown while
+Cat Mode is on.
 
 ## How it works
 
@@ -40,7 +66,11 @@ listeners for keyboard, pointer, mouse, wheel, and touch events. While Cat Mode
 is on it calls `preventDefault()` + `stopImmediatePropagation()` on each one, so
 nothing reaches the page or the video player. The single exception is the
 unlock shortcut, which it watches for on `keydown` and uses to switch Cat Mode
-off. State lives in `chrome.storage.local` and syncs across every tab and frame.
+off. It also watches media `pause` events to keep videos playing, and tallies
+blocked gestures for the on-screen counter. The on/off state lives in
+`chrome.storage.local`; the unlock combo and preferences live in
+`chrome.storage.sync`. `background.js` mirrors that state to the toolbar badge
+and icon and runs the auto-disable alarm.
 
 ## Limitations
 

@@ -74,6 +74,40 @@ button:hover { background: #000; }
 .hint { color: #6b6b72; font-size: 12px; margin-top: 8px; min-height: 16px; }
 .footnote { color: #9a9aa2; font-size: 11px; margin: 14px 2px 0; }
 
+.stat {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b6b72;
+}
+
+.opt-row { gap: 12px; }
+.opt-row + .opt-row { margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0f2; }
+
+select {
+  flex: none;
+  font: 600 13px/1 -apple-system, system-ui, sans-serif;
+  color: #1c1c1f;
+  background: #f1f1f4;
+  border: 1px solid #dadadf;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+kbd.unset { background: #fff4e0; border-color: #f0b34d; color: #9a5b00; font-weight: 600; }
+.warn {
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #9a5b00;
+  background: #fff4e0;
+  border: 1px solid #f0b34d;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
 /* Toggle switch */
 .switch { position: relative; display: inline-block; width: 46px; height: 26px; flex: none; }
 .switch input { opacity: 0; width: 0; height: 0; }

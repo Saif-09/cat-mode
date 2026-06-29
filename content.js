@@ -5,14 +5,18 @@
 // user-defined unlock shortcut, which turns Cat Mode back off.
 
 (() => {
-  const DEFAULTS = {
-    catModeEnabled: false,
+  // Device state in storage.local; synced preferences in storage.sync.
+  const LOCAL_DEFAULTS = { catModeEnabled: false, blockedCount: 0 };
+  const SYNC_DEFAULTS = {
     // Default unlock shortcut: Ctrl+Shift+K
     unlockCombo: { ctrl: true, shift: true, alt: false, meta: false, key: "k" },
+    keepVideoPlaying: true,
   };
 
   let enabled = false;
-  let unlockCombo = DEFAULTS.unlockCombo;
+  let unlockCombo = SYNC_DEFAULTS.unlockCombo;
+  let keepVideoPlaying = SYNC_DEFAULTS.keepVideoPlaying;
+  let blockedTotal = 0;
 
   // Events we intercept while Cat Mode is on. Pointer/touch/wheel need a
   // non-passive listener so preventDefault() actually works.
@@ -23,6 +27,10 @@
     "click", "dblclick", "auxclick", "contextmenu", "wheel",
     "touchstart", "touchend", "touchmove",
   ];
+
+  // One physical action fires several of the events above; we only tally the
+  // "intent" events so the blocked counter reflects gestures, not raw events.
+  const COUNTED = new Set(["keydown", "pointerdown", "wheel", "touchstart", "contextmenu"]);
 
   const isTopFrame = (() => {
     try { return window.top === window; } catch (_) { return false; }
@@ -59,6 +67,7 @@
     }
 
     swallow(e);
+    countBlock(e);
     pulseBanner(false);
   }
 
@@ -70,6 +79,60 @@
       });
     }
   }
+
+  // ---- Blocked-input counter (top frame only, debounced) -------------------
+
+  let pendingBlocks = 0;
+  let flushTimer = null;
+
+  function countBlock(e) {
+    if (!isTopFrame || !COUNTED.has(e.type)) return;
+    pendingBlocks++;
+    if (flushTimer) return;
+    flushTimer = setTimeout(() => {
+      flushTimer = null;
+      const delta = pendingBlocks;
+      pendingBlocks = 0;
+      if (!delta) return;
+      chrome.storage.local.get({ blockedCount: 0 }, (s) => {
+        chrome.storage.local.set({ blockedCount: (s.blockedCount || 0) + delta });
+      });
+    }, 800);
+  }
+
+  // ---- Keep video playing (B1) ---------------------------------------------
+  // Input blocking stops on-page pauses, but OS media keys and programmatic
+  // pauses can still sneak through. We remember media that was playing and
+  // nudge it back to play if it pauses while Cat Mode is on.
+
+  let guarded = new WeakSet();
+
+  function guardPlayingMedia() {
+    guarded = new WeakSet();
+    if (!keepVideoPlaying) return;
+    document.querySelectorAll("video, audio").forEach((m) => {
+      if (!m.paused && !m.ended) guarded.add(m);
+    });
+  }
+
+  function onMediaPlay(e) {
+    if (!enabled || !keepVideoPlaying) return;
+    const m = e.target;
+    if (m instanceof HTMLMediaElement) guarded.add(m);
+  }
+
+  function onMediaPause(e) {
+    if (!enabled || !keepVideoPlaying) return;
+    const m = e.target;
+    if (!(m instanceof HTMLMediaElement) || m.ended) return;
+    if (!guarded.has(m)) return;
+    const p = m.play();
+    if (p && p.catch) p.catch(() => {});
+  }
+
+  // 'play'/'pause' don't bubble, but capture-phase listeners still see them.
+  document.addEventListener("play", onMediaPlay, true);
+  document.addEventListener("pause", onMediaPause, true);
 
   // ---- On-screen banner (top frame only) -----------------------------------
 
@@ -111,12 +174,21 @@
     (document.body || document.documentElement).appendChild(banner);
   }
 
+  function bannerText() {
+    const tail = `press ${comboLabel()} to unlock`;
+    if (blockedTotal > 0) {
+      const noun = blockedTotal === 1 ? "paw" : "paws";
+      return `🐾 Cat Mode ON · ${blockedTotal} ${noun} blocked — ${tail}`;
+    }
+    return `🐾 Cat Mode ON — ${tail}`;
+  }
+
   function renderBanner() {
     if (!isTopFrame) return;
     if (enabled) {
       ensureBanner();
       if (banner) {
-        banner.textContent = `🐾 Cat Mode ON — press ${comboLabel()} to unlock`;
+        banner.textContent = bannerText();
         banner.style.display = "block";
         banner.style.opacity = "1";
       }
@@ -140,21 +212,41 @@
 
   // ---- State sync ----------------------------------------------------------
 
-  function applyState(state) {
-    enabled = !!state.catModeEnabled;
-    if (state.unlockCombo) unlockCombo = state.unlockCombo;
+  function setEnabled(next) {
+    const was = enabled;
+    enabled = !!next;
+    if (enabled && !was) guardPlayingMedia();
     renderBanner();
   }
 
-  chrome.storage.local.get(DEFAULTS, applyState);
+  chrome.storage.local.get(LOCAL_DEFAULTS, (s) => {
+    blockedTotal = s.blockedCount || 0;
+    setEnabled(s.catModeEnabled);
+  });
+  chrome.storage.sync.get(SYNC_DEFAULTS, (s) => {
+    if (s.unlockCombo) unlockCombo = s.unlockCombo;
+    if (typeof s.keepVideoPlaying === "boolean") keepVideoPlaying = s.keepVideoPlaying;
+    renderBanner();
+  });
 
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area !== "local") return;
-    if ("catModeEnabled" in changes) enabled = !!changes.catModeEnabled.newValue;
-    if ("unlockCombo" in changes && changes.unlockCombo.newValue) {
-      unlockCombo = changes.unlockCombo.newValue;
+    if (area === "local") {
+      if ("catModeEnabled" in changes) setEnabled(changes.catModeEnabled.newValue);
+      if ("blockedCount" in changes) {
+        blockedTotal = changes.blockedCount.newValue || 0;
+        renderBanner();
+      }
     }
-    renderBanner();
+    if (area === "sync") {
+      if ("unlockCombo" in changes && changes.unlockCombo.newValue) {
+        unlockCombo = changes.unlockCombo.newValue;
+        renderBanner();
+      }
+      if ("keepVideoPlaying" in changes) {
+        keepVideoPlaying = !!changes.keepVideoPlaying.newValue;
+        if (enabled && keepVideoPlaying) guardPlayingMedia();
+      }
+    }
   });
 
   attach();

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Welcome to Cat Mode</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font: 15px/1.55 -apple-system, system-ui, "Segoe UI", sans-serif;
+      color: #1c1c1f;
+      background: linear-gradient(160deg, #ff7a45, #e23b3b);
+      padding: 32px 16px;
+    }
+    .card {
+      width: 100%;
+      max-width: 520px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      padding: 32px 32px 28px;
+    }
+    .head { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+    .head img { width: 56px; height: 56px; border-radius: 14px; }
+    h1 { font-size: 24px; margin: 0; }
+    .tagline { color: #6b6b72; margin: 0 0 22px; }
+    ol { margin: 0; padding-left: 0; list-style: none; counter-reset: step; }
+    li {
+      position: relative;
+      padding: 14px 0 14px 46px;
+      border-top: 1px solid #f0f0f2;
+      counter-increment: step;
+    }
+    li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0; top: 13px;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      background: #e23b3b; color: #fff;
+      border-radius: 50%; font-weight: 700; font-size: 14px;
+    }
+    li strong { display: block; }
+    li span { color: #6b6b72; font-size: 14px; }
+    kbd {
+      font: 600 13px/1 ui-monospace, Menlo, monospace;
+      background: #f1f1f4; border: 1px solid #dadadf; border-bottom-width: 2px;
+      border-radius: 6px; padding: 2px 7px;
+    }
+    .actions { margin-top: 24px; display: flex; gap: 10px; flex-wrap: wrap; }
+    button {
+      border: none; border-radius: 10px; padding: 12px 18px;
+      font-weight: 600; font-size: 14px; cursor: pointer;
+    }
+    .primary { background: #1c1c1f; color: #fff; }
+    .primary:hover { background: #000; }
+    .note { margin-top: 18px; color: #9a9aa2; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="head">
+      <img src="icon128.png" alt="Cat Mode" />
+      <div>
+        <h1>You're set — Cat Mode 🐾</h1>
+      </div>
+    </div>
+    <p class="tagline">Block your keyboard &amp; trackpad so a pet can't disrupt your video. Two quick steps:</p>
+
+    <ol>
+      <li>
+        <strong>Pin the extension</strong>
+        <span>Click the puzzle-piece icon in the toolbar and pin <strong>Cat Mode</strong> so the on/off toggle is one click away.</span>
+      </li>
+      <li>
+        <strong>Set your global shortcut</strong>
+        <span>Chrome doesn't always assign the suggested <kbd>Ctrl/⌘ + Shift + 9</kbd> automatically. Open the shortcuts page and assign one so you can toggle Cat Mode from anywhere.</span>
+      </li>
+      <li>
+        <strong>Turn it on</strong>
+        <span>Click the toolbar icon and flip <strong>Block keyboard &amp; trackpad</strong>. Unlock with <kbd>Ctrl + Shift + K</kbd> (editable in the popup).</span>
+      </li>
+    </ol>
+
+    <div class="actions">
+      <button class="primary" id="shortcuts-btn">Set up the global shortcut</button>
+    </div>
+    <p class="note">The toolbar toggle always works — the global shortcut is just a convenience.</p>
+  </div>
+  <script src="welcome.js"></script>
+</body>
+</html>

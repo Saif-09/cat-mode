@@ -9,9 +9,12 @@ import os, zlib, struct, math
 OUT = os.path.dirname(os.path.abspath(__file__))
 SS = 4  # supersample factor
 
-# Palette (RGB)
-BG_TOP = (255, 122, 69)    # warm orange
-BG_BOT = (255, 92, 99)     # coral/red
+# Palettes (RGB). "idle" is the default coral tile; "active" is a deeper, more
+# saturated red so the toolbar icon visibly lights up while Cat Mode is on.
+PALETTES = {
+    "": {"top": (255, 122, 69), "bot": (255, 92, 99)},        # warm orange -> coral
+    "-active": {"top": (226, 59, 59), "bot": (150, 22, 30)},  # red -> deep red
+}
 PAW = (255, 255, 255)
 
 # Paw geometry in normalized [0,1] coords: (cx, cy, rx, ry)
@@ -43,13 +46,13 @@ def rounded(x, y, r):
     return math.hypot(qx, qy) <= r
 
 
-def render(size):
+def render(size, top, bot):
     S = size * SS
     px = bytearray(S * S * 4)
     for j in range(S):
         v = j / (S - 1)
         # vertical gradient background color
-        bg = tuple(int(BG_TOP[k] + (BG_BOT[k] - BG_TOP[k]) * v) for k in range(3))
+        bg = tuple(int(top[k] + (bot[k] - top[k]) * v) for k in range(3))
         ny = j / S + 0.5 / S
         for i in range(S):
             nx = i / S + 0.5 / S
@@ -113,6 +116,8 @@ def write_png(path, size, rgba):
         f.write(png)
 
 
-for sz in (16, 32, 48, 128):
-    write_png(os.path.join(OUT, f"icon{sz}.png"), sz, render(sz))
-    print("wrote icon%d.png" % sz)
+for suffix, pal in PALETTES.items():
+    for sz in (16, 32, 48, 128):
+        name = f"icon{sz}{suffix}.png"
+        write_png(os.path.join(OUT, name), sz, render(sz, pal["top"], pal["bot"]))
+        print("wrote", name)
